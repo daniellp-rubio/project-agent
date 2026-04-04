@@ -20,42 +20,33 @@ export default function RegisterPage() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
-
-    // 1. Crear usuario
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
-      options: {
-        data: { full_name: form.fullName },
-      },
+    // Crear usuario + org en el servidor (usa service role, bypasea RLS)
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
     })
 
-    if (authError || !authData.user) {
-      setError(authError?.message ?? 'Error al crear cuenta')
+    const data = await res.json()
+    if (!res.ok) {
+      setError(data.error ?? 'Error al crear la cuenta')
       setLoading(false)
       return
     }
 
-    // 2. Crear organización
-    const slug = form.orgName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-')
-    const { data: org, error: orgError } = await supabase
-      .from('organizations')
-      .insert({ name: form.orgName, slug: `${slug}-${Date.now()}` })
-      .select()
-      .single()
+    // Iniciar sesión automáticamente
+    const supabase = createClient()
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: form.email,
+      password: form.password,
+    })
 
-    if (orgError || !org) {
-      setError('Error al crear la organización')
+    if (signInError) {
+      setError('Cuenta creada. Inicia sesión manualmente.')
       setLoading(false)
+      router.push('/login')
       return
     }
-
-    // 3. Vincular perfil a org
-    await supabase
-      .from('profiles')
-      .update({ org_id: org.id, role: 'owner', full_name: form.fullName })
-      .eq('id', authData.user.id)
 
     router.push('/dashboard')
     router.refresh()
