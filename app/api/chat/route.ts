@@ -107,7 +107,9 @@ export async function POST(req: NextRequest) {
       maxTokens: agent.max_tokens,
     })
   } catch (err) {
-    return NextResponse.json({ error: 'Error al conectar con el modelo de IA' }, { status: 502 })
+    console.error('[chat] OpenRouter error:', err)
+    const message = err instanceof Error ? err.message : 'Error desconocido'
+    return NextResponse.json({ error: 'Error al conectar con el modelo de IA', detail: message }, { status: 502 })
   }
 
   // Crear TransformStream para interceptar tokens y guardar al final

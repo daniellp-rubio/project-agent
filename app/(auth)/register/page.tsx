@@ -53,14 +53,15 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
+
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-slate-900">Crear cuenta</h1>
-          <p className="text-slate-500 mt-2">Empieza gratis, sin tarjeta de crédito</p>
+          <h1 className="text-2xl font-bold text-blue-900">Crear cuenta</h1>
+          <p className="text-gray-500 mt-2">Empieza gratis, sin tarjeta de crédito</p>
         </div>
 
-        <form onSubmit={handleRegister} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+        <form onSubmit={handleRegister} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
               {error}
@@ -74,13 +75,13 @@ export default function RegisterPage() {
             { label: 'Contraseña', field: 'password', type: 'password', placeholder: '••••••••' },
           ].map(({ label, field, type, placeholder }) => (
             <div key={field}>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">{label}</label>
+              <label className="block text-sm font-medium text-gray-900 mb-1.5">{label}</label>
               <input
                 type={type}
                 value={form[field as keyof typeof form]}
                 onChange={e => set(field, e.target.value)}
                 required
-                className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder={placeholder}
               />
             </div>
@@ -89,18 +90,19 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl transition-colors"
+            className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl transition-colors shadow-sm"
           >
             {loading ? 'Creando cuenta...' : 'Crear cuenta gratis'}
           </button>
         </form>
 
-        <p className="text-center text-sm text-slate-500 mt-6">
+        <p className="text-center text-sm text-gray-500 mt-6">
           ¿Ya tienes cuenta?{' '}
-          <Link href="/login" className="text-blue-600 hover:underline font-medium">
+          <Link href="/login" className="text-blue-500 hover:underline font-medium">
             Iniciar sesión
           </Link>
         </p>
+
       </div>
     </div>
   )

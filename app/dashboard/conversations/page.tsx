@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { MessageSquare } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
+import { ConversationsFilter } from './ConversationsFilter'
 
 const SENTIMENT_STYLES: Record<string, string> = {
   positivo: 'bg-green-100 text-green-700',
@@ -67,21 +68,7 @@ export default async function ConversationsPage({
 
       {/* Filtros */}
       <div className="flex gap-3 mb-6 flex-wrap">
-        <select
-          defaultValue={params.agentId ?? ''}
-          className="border border-slate-200 rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onChange={e => {
-            const url = new URL(window.location.href)
-            if (e.target.value) url.searchParams.set('agentId', e.target.value)
-            else url.searchParams.delete('agentId')
-            window.location.href = url.toString()
-          }}
-        >
-          <option value="">Todos los agentes</option>
-          {(agents ?? []).map(a => (
-            <option key={a.id} value={a.id}>{a.name}</option>
-          ))}
-        </select>
+        <ConversationsFilter agents={agents ?? []} currentAgentId={params.agentId} />
       </div>
 
       {(conversations ?? []).length === 0 ? (
