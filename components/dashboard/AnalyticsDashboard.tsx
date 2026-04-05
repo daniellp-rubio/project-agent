@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
@@ -42,20 +42,20 @@ export default function AnalyticsDashboard({ agents }: Props) {
   const [data, setData] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const fetchData = useCallback(async () => {
-    setLoading(true)
+  useEffect(() => {
+    let cancelled = false
     const from = new Date(Date.now() - parseInt(range) * 86400000).toISOString().split('T')[0]
     const to = new Date().toISOString().split('T')[0]
     const params = new URLSearchParams({ from, to })
     if (agentId) params.set('agentId', agentId)
 
-    const res = await fetch(`/api/analytics?${params}`)
-    const json = await res.json()
-    setData(json)
-    setLoading(false)
-  }, [agentId, range])
+    fetch(`/api/analytics?${params}`)
+      .then(res => res.json())
+      .then(json => { if (!cancelled) { setData(json); setLoading(false) } })
+      .catch(() => { if (!cancelled) setLoading(false) })
 
-  useEffect(() => { fetchData() }, [fetchData])
+    return () => { cancelled = true }
+  }, [agentId, range])
 
   async function dismissSuggestion(id: string) {
     await fetch('/api/suggestions', {
@@ -94,7 +94,7 @@ export default function AnalyticsDashboard({ agents }: Props) {
       <div className="flex gap-3 flex-wrap">
         <select
           value={agentId}
-          onChange={e => setAgentId(e.target.value)}
+          onChange={e => { setLoading(true); setAgentId(e.target.value) }}
           className="border border-slate-200 rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Todos los agentes</option>
@@ -103,7 +103,7 @@ export default function AnalyticsDashboard({ agents }: Props) {
 
         <select
           value={range}
-          onChange={e => setRange(e.target.value)}
+          onChange={e => { setLoading(true); setRange(e.target.value) }}
           className="border border-slate-200 rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="7">Últimos 7 días</option>
