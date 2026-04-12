@@ -11,8 +11,8 @@ export default function LandingPage() {
         </div>
 
         <h1 className="text-5xl font-bold text-blue-900 mb-6 leading-tight tracking-tight">
-          Agentes de Inteligencia Artificial (IA) para
-          <span className="text-blue-500"> clinicas de belleza</span>
+          Agentes de Inteligencia Artificial (IA)
+          <span className="text-blue-500"></span>
         </h1>
 
         <p className="text-xl text-gray-500 mb-12 max-w-2xl mx-auto leading-relaxed">
